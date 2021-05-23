@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 
 public class MainWindow : EditorWindow
 {
     public GameObject propList;
-    
-    private int _height = 1;
-    private int _width = 1;
+
+    private int _height = 10;
+    private int _width = 10;
+    private bool[,] grid = new bool[10, 10];
     private int _propCount;
-    
+
     [MenuItem("CustomTools/MapGenerator")]
     public static void OpenWindow()
     {
@@ -52,33 +50,43 @@ public class MainWindow : EditorWindow
         bool error = false; 
         GUIStyle style = new GUIStyle(EditorStyles.label);
         style.normal.textColor = Color.red;
-
+        
         _height = EditorGUILayout.IntField("Matrix Height", _height);
         if (_height < 1 || _height > 10)
         {
             GUILayout.Label("Height must be between 1 and 10!", style);
             error = true;
         }
-        
+
         EditorGUILayout.Space();
-        
+              
         _width = EditorGUILayout.IntField("Matrix Width", _width);
         if (_width < 1 || _width > 10)
         {
             GUILayout.Label("Width must be between 1 and 10!", style);
             error = true;
         }
-
+        
+        if (_width != grid.GetLength(0) || _height != grid.GetLength(1))
+            grid = new bool[_width, _height];
+        
         if (!error)
-        {
-            if (GUILayout.Button("Draw Grid", GUILayout.Height(30)))
-                DrawGrid();
-        }
+            DrawGrid();
     }
-
+    
     private void DrawGrid()
     {
-        
+        EditorGUILayout.BeginHorizontal();
+        for (int j = 0; j < _height; j++)
+        {
+            EditorGUILayout.BeginVertical();
+            for (int i = 0; i < _width; i++)
+            {
+                grid[i, j] = EditorGUILayout.Toggle(grid[i, j]);
+            }
+            EditorGUILayout.EndVertical();
+        }
+        EditorGUILayout.EndHorizontal();
     }
 
     private void Generate()
