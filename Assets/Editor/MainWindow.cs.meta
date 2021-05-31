@@ -3,7 +3,11 @@ guid: 9fdf88214ad9fc545b32599d027c190c
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - m_ViewDataDictionary: {instanceID: 0}
+  - propList: {instanceID: 0}
+  - tex: {fileID: 2800000, guid: 26eb0ab9d1298de478384c6b47f06c84, type: 3}
+  - tex2: {fileID: 2800000, guid: 3f2c02f297c9567468efbc3b0ed35606, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
