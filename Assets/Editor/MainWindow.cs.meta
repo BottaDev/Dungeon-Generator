@@ -6,7 +6,7 @@ MonoImporter:
   defaultReferences:
   - m_ViewDataDictionary: {instanceID: 0}
   - propList: {instanceID: 0}
-  - tex: {fileID: 2800000, guid: 26eb0ab9d1298de478384c6b47f06c84, type: 3}
+  - tex: {instanceID: 0}
   - tex2: {fileID: 2800000, guid: 3f2c02f297c9567468efbc3b0ed35606, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}

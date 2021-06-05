@@ -1,5 +1,6 @@
 ﻿using UnityEditor;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class MainWindow : EditorWindow
 {
@@ -11,9 +12,13 @@ public class MainWindow : EditorWindow
     private int _width = 10;
     private bool[,] grid = new bool[10, 10];
     private int _propCount;
+    private float _roomSeparation = 1;
+    private List<GameObject> _nodeList = new List<GameObject>(); 
+    
+    private static Generator _generator;
 
-    GUIStyle style = new GUIStyle(EditorStyles.label);
-
+    private readonly GUIStyle _style = new GUIStyle(EditorStyles.label);
+    private readonly GUIStyle _errorStyle = new GUIStyle(EditorStyles.label);
 
     [MenuItem("CustomTools/MapGenerator")]
     public static void OpenWindow()
@@ -23,17 +28,20 @@ public class MainWindow : EditorWindow
         window.wantsMouseMove = true;
 
         window.minSize = new Vector2(450, 360);
+        
+        _generator = new Generator();
     }
 
     private void OnGUI()
     {
-        style.normal.textColor = Color.white;
-
-        GUI.DrawTexture(new Rect(0, 0,position.width, position.height), tex, ScaleMode.StretchToFill);
+        _style.normal.textColor = Color.white;
+        _errorStyle.normal.textColor = Color.red;
+        
+        if (tex != null)
+            GUI.DrawTexture(new Rect(0, 0,position.width, position.height), tex, ScaleMode.StretchToFill);
+        
+        if (tex2 != null)
         GUI.DrawTexture(new Rect(0, 0, position.width, 170 + _height * 19), tex2, ScaleMode.StretchToFill);
-        //EditorGUI.DrawRect(GUILayoutUtility.GetRect(1, 250), new Color(0.2f,0.2f,0.2f,0.5f));
-
-        //360
 
         EditorGUILayout.Space();
         EditorGUILayout.Space();
@@ -50,13 +58,18 @@ public class MainWindow : EditorWindow
         
         if (GUILayout.Button("Generate", GUILayout.Height(40)))
             Generate();
+        
+        EditorGUILayout.Space();
+        
+        if (GUILayout.Button("Delete Map", GUILayout.Height(40)))
+            DeleteMap();
     }
 
     private void DrawPropConfig()
     {
         EditorGUILayout.BeginHorizontal();
 
-        EditorGUILayout.LabelField("Prop Count", style);
+        EditorGUILayout.LabelField("Prop Count", _style);
         _propCount = EditorGUILayout.IntField( _propCount);
 
         EditorGUILayout.EndHorizontal();
@@ -67,50 +80,43 @@ public class MainWindow : EditorWindow
 
         EditorGUILayout.BeginHorizontal();
 
-        EditorGUILayout.LabelField("Prop List", style);
+        EditorGUILayout.LabelField("Prop List", _style);
         EditorGUILayout.ObjectField(stringsProperty, new GUIContent(""));
 
         EditorGUILayout.EndHorizontal();
-        /*
-        ScriptableObject target = this;
-        SerializedObject so = new SerializedObject(target);
-        SerializedProperty stringsProperty = so.FindProperty("propList");
- 
-        EditorGUILayout.PropertyField(stringsProperty, true);
-        so.ApplyModifiedProperties();
-        */
     }
     
     private void DrawGridConfig()
     {
-        bool error = false; 
-
+        bool error = false;
 
         EditorGUILayout.BeginHorizontal();
 
-        EditorGUILayout.LabelField("Matrix Height", style); 
+        EditorGUILayout.LabelField("Matrix Height", _style); 
         _height = EditorGUI.IntSlider(new Rect(100, 19, position.width -110, 15), _height, 1, 10);
 
         EditorGUILayout.EndHorizontal();
-
-        if (_height < 1 || _height > 10)
-        {
-            GUILayout.Label("Height must be between 1 and 10!", style);
-            error = true;
-        }
 
         EditorGUILayout.Space();
 
         EditorGUILayout.BeginHorizontal();
 
-        EditorGUILayout.LabelField("Matrix Width", style);
+        EditorGUILayout.LabelField("Matrix Width", _style);
         _width = EditorGUI.IntSlider(new Rect(100, 44, position.width - 110, 15), _width, 1, 10);
-
+        
         EditorGUILayout.EndHorizontal();
 
-        if (_width < 1 || _width > 10)
+        EditorGUILayout.Space();
+        
+        EditorGUILayout.BeginHorizontal();
+        
+        _roomSeparation = EditorGUILayout.FloatField("Room Separation", _roomSeparation, _style);
+        
+        EditorGUILayout.EndHorizontal();
+
+        if (_roomSeparation < 1)
         {
-            GUILayout.Label("Width must be between 1 and 10!", style);
+            GUILayout.Label("The room separation must be greater than 0!", _errorStyle);
             error = true;
         }
         
@@ -124,12 +130,13 @@ public class MainWindow : EditorWindow
     private void DrawGrid()
     {
         EditorGUILayout.BeginHorizontal();
-        for (int j = 0; j < _width; j++)
+        GUILayout.FlexibleSpace();
+        for (int x = 0; x < _width; x++)
         {
             EditorGUILayout.BeginVertical();
-            for (int i = 0; i < _height; i++)
+            for (int y = 0; y < _height; y++)
             {
-                grid[j, i] = EditorGUILayout.Toggle(grid[j, i]);
+                grid[x, y] = EditorGUILayout.Toggle(grid[x, y]);
             }
             EditorGUILayout.EndVertical();
         }
@@ -138,6 +145,32 @@ public class MainWindow : EditorWindow
 
     private void Generate()
     {
+        DeleteMap(false);
         
+        _generator.SetParameters(grid, _width,_height, _roomSeparation);
+        _generator.GenerateDungeon();
+
+        _nodeList = _generator.GetNodes();
+        
+        Debug.Log("Map generated successfully.");
+    }
+
+    private void DeleteMap(bool showMessage = true)
+    {
+        if (_nodeList.Count == 0 && showMessage)
+        {
+            Debug.LogWarning("There is no map to delete!");
+            return;
+        }
+
+        foreach (GameObject item in _nodeList)
+        {
+            DestroyImmediate(item);
+        }
+        
+        _nodeList.Clear();
+        
+        if (showMessage)
+            Debug.LogWarning("Map deleted successfully.");
     }
 }
