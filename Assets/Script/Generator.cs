@@ -10,6 +10,8 @@ public class Generator
     private int _height;
     private float _roomSeparation;
     private List<GameObject> _nodeList = new List<GameObject>();
+
+    private GameObject nodePrefab;
     
     public void SetParameters(bool[,] grid, int width, int height, float roomSeparation)
     {
@@ -21,6 +23,8 @@ public class Generator
 
     public void GenerateDungeon()
     {
+        nodePrefab = Resources.Load<GameObject>("Cube");
+        Debug.Log(nodePrefab);
         CreateNodes();
     }
 
@@ -36,14 +40,17 @@ public class Generator
             {
                 if (_grid[x, y] && x == 0 && y == 0)
                 {
-                    GameObject node = new GameObject("Node [" + x + " | " + y + "]");
+                    GameObject node = GameObject.Instantiate(nodePrefab);
+                    node.name = "Node [" + x + " | " + y + "]";
+                    //GameObject node = new GameObject("Node [" + x + " | " + y + "]");
                     node.transform.position = Vector3.zero;
-
                     _nodeList.Add(node);
                 }
                 else if (_grid[x, y])
                 {
-                    GameObject node = new GameObject("Node [" + x + " | " + y + "]");
+                    GameObject node = GameObject.Instantiate(nodePrefab);
+                    node.name = "Node [" + x + " | " + y + "]";
+                    //GameObject node = new GameObject("Node [" + x + " | " + y + "]");
                     node.transform.position = lastPos;
 
                     _nodeList.Add(node);

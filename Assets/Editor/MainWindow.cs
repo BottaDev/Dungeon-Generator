@@ -7,6 +7,9 @@ public class MainWindow : EditorWindow
     public GameObject propList;
     public Texture2D tex;
     public Texture2D tex2;
+    public Texture2D buttonTextureA;
+    public Texture2D buttonTextureB;
+
 
     private int _height = 10;
     private int _width = 10;
@@ -46,6 +49,19 @@ public class MainWindow : EditorWindow
         EditorGUILayout.Space();
         EditorGUILayout.Space();
         EditorGUILayout.Space();
+
+        if (GUILayout.Button("invert"))
+        {
+            for (int x = 0; x < _width; x++)
+            {
+                for (int y = 0; y < _height; y++)
+                {
+                    grid[x, y] = !grid[x, y];
+                }
+            }
+
+        }
+
 
         DrawGridConfig();
         
@@ -130,17 +146,31 @@ public class MainWindow : EditorWindow
     private void DrawGrid()
     {
         EditorGUILayout.BeginHorizontal();
-        GUILayout.FlexibleSpace();
         for (int x = 0; x < _width; x++)
         {
             EditorGUILayout.BeginVertical();
             for (int y = 0; y < _height; y++)
             {
-                grid[x, y] = EditorGUILayout.Toggle(grid[x, y]);
+                //grid[x, y] = EditorGUILayout.Toggle(grid[x, y]);
+                grid[x, y] = ButtonCheck(x,y);
             }
             EditorGUILayout.EndVertical();
         }
         EditorGUILayout.EndHorizontal();
+    }
+
+    bool ButtonCheck(int x, int y)
+    {
+        Texture2D buttonTexture;
+        if (grid[x, y]) buttonTexture = buttonTextureA;
+        else buttonTexture = buttonTextureB;
+
+        if (GUILayout.Button(buttonTexture, GUILayout.Height(30), GUILayout.Width(30)))
+        {
+            return !grid[x, y];
+        }
+
+        else return grid[x, y];
     }
 
     private void Generate()
