@@ -43,10 +43,11 @@ public class MainWindow : EditorWindow
         _errorStyle.normal.textColor = Color.red;
         
         if (tex != null)
-            GUI.DrawTexture(new Rect(0, 0,position.width, position.height), tex, ScaleMode.StretchToFill);
+            GUI.DrawTexture(new Rect(0, 0, position.width, position.height), tex, ScaleMode.StretchToFill);
         
         if (tex2 != null)
-        GUI.DrawTexture(new Rect(0, 0, position.width, 170 + _height * 19), tex2, ScaleMode.StretchToFill);
+            GUI.DrawTexture(new Rect(0, 0, position.width, position.height), tex2, ScaleMode.StretchToFill);
+        //GUI.DrawTexture(new Rect(0, 0, position.width, 170 + _height * 19), tex2, ScaleMode.StretchToFill);
 
         EditorGUILayout.Space();
         EditorGUILayout.Space();
@@ -135,14 +136,15 @@ public class MainWindow : EditorWindow
         EditorGUILayout.Space();
         
         EditorGUILayout.BeginHorizontal();
-        
-        _roomSeparation = EditorGUILayout.FloatField("Room Separation", _roomSeparation, _style);
+
+        EditorGUILayout.LabelField("Room Separation", _style);
+        _roomSeparation = EditorGUILayout.FloatField(_roomSeparation);
         
         EditorGUILayout.EndHorizontal();
 
         if (_roomSeparation < 1)
         {
-            GUILayout.Label("The room separation must be greater than 0!", _errorStyle);
+            GUILayout.Label("The room separation must be greater than 1!", _errorStyle);
             error = true;
         }
         
@@ -161,7 +163,6 @@ public class MainWindow : EditorWindow
             EditorGUILayout.BeginVertical();
             for (int y = 0; y < _height; y++)
             {
-                //grid[x, y] = EditorGUILayout.Toggle(grid[x, y]);
                 grid[x, y] = ButtonCheck(x,y);
             }
             EditorGUILayout.EndVertical();
