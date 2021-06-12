@@ -7,14 +7,19 @@ public class MainWindow : EditorWindow
     public GameObject propList;
     public Texture2D tex;
     public Texture2D tex2;
+    public Texture2D buttonTextureA;
+    public Texture2D buttonTextureB;
+
 
     private int _height = 10;
     private int _width = 10;
     private bool[,] grid = new bool[10, 10];
     private int _propCount;
     private float _roomSeparation = 1;
-    private List<GameObject> _nodeList = new List<GameObject>(); 
-    
+    private List<GameObject> _nodeList = new List<GameObject>();
+    private int _column;
+    private int _row;
+
     private static Generator _generator;
 
     private readonly GUIStyle _style = new GUIStyle(EditorStyles.label);
@@ -28,7 +33,7 @@ public class MainWindow : EditorWindow
 
         window.wantsMouseMove = true;
 
-        window.minSize = new Vector2(450, 420);
+        window.minSize = new Vector2(500, 710);
         
         _generator = new Generator();
     }
@@ -47,17 +52,39 @@ public class MainWindow : EditorWindow
         EditorGUILayout.EndHorizontal();
         
         if (tex != null)
-            GUI.DrawTexture(new Rect(0, 0,position.width, position.height), tex, ScaleMode.StretchToFill);
+            GUI.DrawTexture(new Rect(0, 0, position.width, position.height), tex, ScaleMode.StretchToFill);
         
         if (tex2 != null)
             GUI.DrawTexture(new Rect(0, 0, position.width, 170 + _height * 19), tex2, ScaleMode.StretchToFill);
+
 
         EditorGUILayout.Space();
         EditorGUILayout.Space();
         EditorGUILayout.Space();
 
         DrawGridConfig();
+        int column = EditorGUILayout.IntField(_column, _style);
+        if (column <= 10)
+            _column = column;
+        else
+            _column = 10;
+        if (GUILayout.Button("C", GUILayout.Width(20), GUILayout.Height(20)))
+            SelectColumn(_column -1);
+
+        int row = EditorGUILayout.IntField(_row, _style);
+        if (row <= 10)
+            _row = row;
+        else
+            _row = 10;
+        if (GUILayout.Button("R", GUILayout.Width(20), GUILayout.Height(20)))
+            SelectRow(_row -1);
         
+        EditorGUILayout.Space();
+        EditorGUILayout.Space();
+
+        if (GUILayout.Button("Invert All Grid", GUILayout.Height(40)))
+            InvertGrid();
+
         EditorGUILayout.Space();
         EditorGUILayout.Space();
         
@@ -116,14 +143,14 @@ public class MainWindow : EditorWindow
         EditorGUILayout.Space();
         
         EditorGUILayout.BeginHorizontal();
-        
+
         _roomSeparation = EditorGUI.FloatField(new Rect(0, 60, 200, 15),"Room Separation", _roomSeparation, _style);
         
         EditorGUILayout.EndHorizontal();
 
         if (_roomSeparation < 1)
         {
-            GUILayout.Label("The room separation must be greater than 0!", _errorStyle);
+            GUILayout.Label("The room separation must be greater than 1!", _errorStyle);
             error = true;
         }
         
@@ -137,17 +164,59 @@ public class MainWindow : EditorWindow
     private void DrawGrid()
     {
         EditorGUILayout.BeginHorizontal();
-        GUILayout.FlexibleSpace();
         for (int x = 0; x < _width; x++)
         {
             EditorGUILayout.BeginVertical();
             for (int y = 0; y < _height; y++)
             {
-                grid[x, y] = EditorGUILayout.Toggle(grid[x, y]);
+                grid[x, y] = ButtonCheck(x,y);
             }
             EditorGUILayout.EndVertical();
         }
         EditorGUILayout.EndHorizontal();
+    }
+
+    void SelectColumn(int columnNumber)
+    {
+        EditorGUILayout.BeginVertical();
+        for (int y = 0; y < _height; y++)
+        {
+            grid[columnNumber, y] = !grid[columnNumber, y];
+        }
+        EditorGUILayout.EndVertical();
+    }
+
+    void SelectRow(int rowNumber)
+    {
+        EditorGUILayout.BeginHorizontal();
+        for (int x = 0; x < _width; x++)
+        {
+            grid[x, rowNumber] = !grid[x, rowNumber];
+        }
+        EditorGUILayout.EndHorizontal();
+    }
+
+    bool ButtonCheck(int x, int y)
+    {
+        Texture2D buttonTexture;
+        if (grid[x, y]) buttonTexture = buttonTextureA;
+        else buttonTexture = buttonTextureB;
+
+        if (GUILayout.Button(buttonTexture, GUILayout.Height(30), GUILayout.Width(30)))
+            return !grid[x, y];
+
+        else return grid[x, y];
+    }
+
+    void InvertGrid()
+    {
+        for (int x = 0; x < _width; x++)
+        {
+            for (int y = 0; y < _height; y++)
+            {
+                grid[x, y] = !grid[x, y];
+            }
+        }
     }
 
     private void Generate()
