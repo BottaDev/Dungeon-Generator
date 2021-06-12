@@ -26,7 +26,9 @@ public class MainWindow : EditorWindow
     private GameObject _room4;
 
     private static Generator _generator;
+
     private static readonly GUIStyle _style = new GUIStyle(EditorStyles.label);
+    private static readonly GUIStyle _titleStyle = new GUIStyle(EditorStyles.label);
     private static readonly GUIStyle _errorStyle = new GUIStyle(EditorStyles.label);
 
     [MenuItem("CustomTools/MapGenerator")]
@@ -46,12 +48,23 @@ public class MainWindow : EditorWindow
 
     private void OnGUI()
     {
+        _style.normal.textColor = Color.white;
+        _errorStyle.normal.textColor = Color.red;
+        _titleStyle.normal.textColor = Color.white;
+        _titleStyle.fontSize = 20;
+
+        EditorGUILayout.BeginHorizontal();
+
+        EditorGUI.LabelField(new Rect(position.width / 2 -100, 0, 200, 25), "Dungeon Generator", _titleStyle);
+
+        EditorGUILayout.EndHorizontal();
+        
         if (tex != null)
             GUI.DrawTexture(new Rect(0, 0, position.width, position.height), tex, ScaleMode.StretchToFill);
         
         if (tex2 != null)
-            GUI.DrawTexture(new Rect(0, 0, position.width, position.height), tex2, ScaleMode.StretchToFill);
-        //GUI.DrawTexture(new Rect(0, 0, position.width, 170 + _height * 19), tex2, ScaleMode.StretchToFill);
+            GUI.DrawTexture(new Rect(0, 0, position.width, 170 + _height * 19), tex2, ScaleMode.StretchToFill);
+
 
         EditorGUILayout.Space();
         EditorGUILayout.Space();
@@ -83,7 +96,7 @@ public class MainWindow : EditorWindow
         EditorGUILayout.Space();
         EditorGUILayout.Space();
         
-        DrawPropConfig();
+        //DrawPropConfig();
         
         EditorGUILayout.Space();
         
@@ -112,15 +125,13 @@ public class MainWindow : EditorWindow
         _room4 = (GameObject) EditorGUILayout.ObjectField(_room4, typeof(GameObject), true);
         EditorGUILayout.EndHorizontal();
         
+
+        //if (GUILayout.Button("Generate", GUILayout.Height(40)))
+        //    Generate();
         EditorGUILayout.Space();
         
-        if (GUILayout.Button("Generate", GUILayout.Height(40)))
-            Generate();
-        
-        EditorGUILayout.Space();
-        
-        if (GUILayout.Button("Delete Map", GUILayout.Height(40)))
-            DeleteMap();
+        //if (GUILayout.Button("Delete Map", GUILayout.Height(40)))
+        //    DeleteMap();
     }
 
     private void DrawPropConfig()
@@ -150,16 +161,14 @@ public class MainWindow : EditorWindow
 
         EditorGUILayout.BeginHorizontal();
 
-        EditorGUILayout.LabelField("Matrix Height", _style); 
+        EditorGUI.LabelField(new Rect(0, 19, 200, 15),"Matrix Height", _style);
         _height = EditorGUI.IntSlider(new Rect(100, 19, position.width -110, 15), _height, 1, 10);
 
         EditorGUILayout.EndHorizontal();
 
-        EditorGUILayout.Space();
-
         EditorGUILayout.BeginHorizontal();
 
-        EditorGUILayout.LabelField("Matrix Width", _style);
+        EditorGUI.LabelField(new Rect(0, 45, 200, 15), "Matrix Width", _style);
         _width = EditorGUI.IntSlider(new Rect(100, 44, position.width - 110, 15), _width, 1, 10);
         
         EditorGUILayout.EndHorizontal();
@@ -168,8 +177,7 @@ public class MainWindow : EditorWindow
         
         EditorGUILayout.BeginHorizontal();
 
-        EditorGUILayout.LabelField("Room Separation", _style);
-        _roomSeparation = EditorGUILayout.FloatField(_roomSeparation);
+        _roomSeparation = EditorGUI.FloatField(new Rect(0, 60, 200, 15),"Room Separation", _roomSeparation, _style);
         
         EditorGUILayout.EndHorizontal();
 
