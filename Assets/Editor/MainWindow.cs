@@ -107,15 +107,18 @@ public class MainWindow : EditorWindow
         //if (GUILayout.Button("R", GUILayout.Width(20), GUILayout.Height(20)))
         //    SelectRow(_row -1);
 
-        DrawPropConfig();
+        DrawPropConfig();  
         
-        if (GUI.Button(new Rect(position.width / 2 - 100, 610, 200, 25), "Invert All Grid"))
+        if (GUI.Button(new Rect(position.width / 2 - 205, 630, 200, 25), "Invert All Grid"))
             InvertGrid();
-         
-        if (GUI.Button(new Rect(position.width / 2 - 100, 640, 200, 25),"Generate"))
+
+        if (GUI.Button(new Rect(position.width / 2 + 5  , 630, 200, 25), "Clear Grid"))
+            ClearGrid();
+
+        if (GUI.Button(new Rect(position.width / 2 - 205, 660, 200, 25),"Generate"))
             Generate();
-        
-        if (GUI.Button(new Rect(position.width / 2 - 100, 670, 200, 25),"Delete Map"))
+         
+        if (GUI.Button(new Rect(position.width / 2 + 5  , 660, 200, 25),"Delete Map"))
             DeleteMap();
     }
 
@@ -269,6 +272,16 @@ public class MainWindow : EditorWindow
             for (int y = 0; y < _height; y++)
             {
                 grid[x, y] = !grid[x, y];
+            }
+        }
+    }
+    void ClearGrid()
+    {
+        for (int x = 0; x < _width; x++)
+        {
+            for (int y = 0; y < _height; y++)
+            {
+                grid[x, y] = false;
             }
         }
     }
