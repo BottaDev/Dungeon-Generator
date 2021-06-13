@@ -68,22 +68,26 @@ public class Generator
 
     private GameObject SetRoom(int x, int y)
     {
-        bool leftSide;
-        bool rightSide;
-        bool topSide;
-        bool bottonSide;
-
+        bool leftSide = false;
+        bool rightSide = false;
+        bool topSide = false;
+        bool bottonSide = false;
         GameObject roomPrefab = null;
-
-        // REVISAR CASO CON 1 FILA O 1 COLUMNA
-
-        if (x == 0 || x == _grid.GetLength(0) - 1 || y == 0 || y == _grid.GetLength(1) - 1)
-            CheckBoundaryNode(x, y, out leftSide, out rightSide, out topSide, out bottonSide);
+        
+        if (_grid.GetLength(0) == 1 || _grid.GetLength(1) == 1)
+        {
+            CheckLineNode(x, y, out leftSide, out rightSide, out topSide, out bottonSide);
+        }
         else
-            CheckCenterNode(x, y, out leftSide, out rightSide, out topSide, out bottonSide);
+        {
+            if (x == 0 || x == _grid.GetLength(0) - 1 || y == 0 || y == _grid.GetLength(1) - 1)
+                CheckBoundaryNode(x, y, out leftSide, out rightSide, out topSide, out bottonSide);
+            else
+                CheckCenterNode(x, y, out leftSide, out rightSide, out topSide, out bottonSide);   
+        }
+
 
         int sidesCount = new bool[4] { leftSide, rightSide, topSide, bottonSide }.Where(c => c).Count();
-
         if (sidesCount == 0 || sidesCount == 1)
         {
             roomPrefab = _room1;   
@@ -179,6 +183,80 @@ public class Generator
             
         if (!_grid[x, y + 1]) // Right Node
             rightSide = false;
+    }
+
+    /// <summary>
+    /// Grids with one column or one row
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <param name="leftSide"></param>
+    /// <param name="rightSide"></param>
+    /// <param name="topSide"></param>
+    /// <param name="bottonSide"></param>
+    private void CheckLineNode(int x, int y, out bool leftSide, out bool rightSide, out bool topSide, out bool bottonSide)
+    {
+        leftSide = true;
+        rightSide = true;
+        topSide = true;
+        bottonSide = true;
+
+        if (_grid.GetLength(0) == 1)
+        {
+            topSide = false;
+            bottonSide = false;
+            
+            if (y == 0)
+            {
+                leftSide = false;
+            
+                if (!_grid[x, y + 1]) // Right Node
+                    rightSide = false;
+            }
+            else if (y == _grid.GetLength(1) - 1)
+            {
+                rightSide = false;
+            
+                if (!_grid[x, y - 1]) // Left Node
+                    leftSide = false;
+            }
+            else
+            {
+                if (!_grid[x, y - 1]) // Left Node
+                    leftSide = false;
+            
+                if (!_grid[x, y + 1]) // Right Node
+                    rightSide = false;
+            }
+        }
+        else if (_grid.GetLength(1) == 1)
+        {
+            leftSide = false;
+            rightSide = false;
+            
+            if (x == 0)
+            {
+                topSide = false;
+
+                if (!_grid[x + 1, y]) // Botton Node
+                    bottonSide = false;
+            }
+            else if (x == _grid.GetLength(0) - 1)
+            {
+                bottonSide = false;
+
+                if (!_grid[x - 1, y]) // Top Node
+                    topSide = false;
+            }
+            else
+            {
+                if (!_grid[x - 1, y]) // Top Node
+                    topSide = false;
+            
+                if (!_grid[x + 1, y]) // Botton Node
+                    bottonSide = false;
+            }
+        }
     }
     
     public List<GameObject> GetNodes()
