@@ -27,7 +27,7 @@ public class MainWindow : EditorWindow
 
     private static Generator _generator;
 
-    private static readonly GUIStyle _style = new GUIStyle(EditorStyles.label);
+    private static readonly GUIStyle _style      = new GUIStyle(EditorStyles.label);
     private static readonly GUIStyle _titleStyle = new GUIStyle(EditorStyles.label);
     private static readonly GUIStyle _errorStyle = new GUIStyle(EditorStyles.label);
 
@@ -55,7 +55,7 @@ public class MainWindow : EditorWindow
 
         EditorGUILayout.BeginHorizontal();
 
-        EditorGUI.LabelField(new Rect(position.width / 2 -100, 0, 200, 25), "Dungeon Generator", _titleStyle);
+        EditorGUI.LabelField(new Rect(0, 10, 200, 200), "Dungeon Generator", _titleStyle);
 
         EditorGUILayout.EndHorizontal();
         
@@ -65,10 +65,30 @@ public class MainWindow : EditorWindow
         if (tex2 != null)
             GUI.DrawTexture(new Rect(0, 0, position.width, 170 + _height * 19), tex2, ScaleMode.StretchToFill);
 
+        EditorGUILayout.BeginHorizontal();
+        GUI.Label(new Rect(0, 50, 200,25),"One entrance Room",_style);
+        _room1 = (GameObject)EditorGUI.ObjectField(new Rect(position.width / 2 , 50, 200,15),_room1, typeof(GameObject), true);
+        EditorGUILayout.EndHorizontal();
 
-        EditorGUILayout.Space();
-        EditorGUILayout.Space();
-        EditorGUILayout.Space();
+        EditorGUILayout.BeginHorizontal();
+        GUI.Label(new Rect(0, 70, 200,25),"Two entrances 'A' Room",_style);
+        _room2A = (GameObject) EditorGUI.ObjectField(new Rect(position.width / 2, 70, 200,15),_room2A, typeof(GameObject), true);
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.BeginHorizontal();
+        GUI.Label(new Rect(0, 90, 200,25),"Two entrances 'B' Room", _style);
+        _room2B = (GameObject) EditorGUI.ObjectField(new Rect(position.width / 2, 90, 200, 15),_room2B, typeof(GameObject), true);
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.BeginHorizontal();
+        GUI.Label(new Rect(0, 110, 200, 25),"Three entrances Room", _style);
+        _room3 = (GameObject) EditorGUI.ObjectField(new Rect(position.width / 2, 110, 200, 15), _room3, typeof(GameObject), true);
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.BeginHorizontal();
+        GUI.Label(new Rect(0, 130, 200, 25),"Four entrances Room", _style);
+        _room4 = (GameObject) EditorGUI.ObjectField(new Rect(position.width / 2, 130, 200, 15), _room4, typeof(GameObject), true);
+        EditorGUILayout.EndHorizontal();
 
         DrawGridConfig();
         //int column = EditorGUILayout.IntField(_column, _style);
@@ -77,7 +97,7 @@ public class MainWindow : EditorWindow
         //else
         //    _column = 10;
         //if (GUILayout.Button("C", GUILayout.Width(20), GUILayout.Height(20)))
-        //    SelectColumn(_column -1);
+        //    SelectColumn(_column - 1);
 
         //int row = EditorGUILayout.IntField(_row, _style);
         //if (row <= 10)
@@ -86,60 +106,25 @@ public class MainWindow : EditorWindow
         //    _row = 10;
         //if (GUILayout.Button("R", GUILayout.Width(20), GUILayout.Height(20)))
         //    SelectRow(_row -1);
-        
-        EditorGUILayout.Space();
-        EditorGUILayout.Space();
 
-        //if (GUILayout.Button("Invert All Grid", GUILayout.Height(40)))
-        //    InvertGrid();
+        DrawPropConfig();
+        
+        if (GUI.Button(new Rect(position.width / 2 - 100, 610, 200, 25), "Invert All Grid"))
+            InvertGrid();
 
-        EditorGUILayout.Space();
-        EditorGUILayout.Space();
+        if (GUI.Button(new Rect(position.width / 2 - 100, 640, 200, 25),"Generate"))
+            Generate();
         
-        //DrawPropConfig();
-        
-        EditorGUILayout.Space();
-        
-        //EditorGUILayout.BeginHorizontal();
-        //GUILayout.Label("One entrance Room");
-        //_room1 = (GameObject) EditorGUILayout.ObjectField(_room1, typeof(GameObject), true);
-        //EditorGUILayout.EndHorizontal();
-        
-        //EditorGUILayout.BeginHorizontal();
-        //GUILayout.Label("Two entrances 'A' Room");
-        //_room2A = (GameObject) EditorGUILayout.ObjectField(_room2A, typeof(GameObject), true);
-        //EditorGUILayout.EndHorizontal();
-        
-        //EditorGUILayout.BeginHorizontal();
-        //GUILayout.Label("Two entrances 'B' Room");
-        //_room2B = (GameObject) EditorGUILayout.ObjectField(_room2B, typeof(GameObject), true);
-        //EditorGUILayout.EndHorizontal();
-        
-        //EditorGUILayout.BeginHorizontal();
-        //GUILayout.Label("Three entrances Room");
-        //_room3 = (GameObject) EditorGUILayout.ObjectField(_room3, typeof(GameObject), true);
-        //EditorGUILayout.EndHorizontal();
-        
-        //EditorGUILayout.BeginHorizontal();
-        //GUILayout.Label("Four entrances Room");
-        //_room4 = (GameObject) EditorGUILayout.ObjectField(_room4, typeof(GameObject), true);
-        //EditorGUILayout.EndHorizontal();
-        
-
-        //if (GUILayout.Button("Generate", GUILayout.Height(40)))
-        //    Generate();
-        EditorGUILayout.Space();
-        
-        //if (GUILayout.Button("Delete Map", GUILayout.Height(40)))
-        //    DeleteMap();
+        if (GUI.Button(new Rect(position.width / 2 - 100, 670, 200, 25),"Delete Map"))
+            DeleteMap();
     }
 
     private void DrawPropConfig()
     {
         EditorGUILayout.BeginHorizontal();
 
-        EditorGUILayout.LabelField("Prop Count", _style);
-        _propCount = EditorGUILayout.IntField( _propCount);
+        EditorGUI.LabelField(new Rect(0,570, 200, 25),"Prop Count", _style);
+        _propCount = EditorGUI.IntField(new Rect(position.width / 2, 570, 200, 15), _propCount);
 
         EditorGUILayout.EndHorizontal();
 
@@ -149,8 +134,8 @@ public class MainWindow : EditorWindow
 
         EditorGUILayout.BeginHorizontal();
 
-        EditorGUILayout.LabelField("Prop List", _style);
-        EditorGUILayout.ObjectField(stringsProperty, new GUIContent(""));
+        EditorGUI.LabelField(new Rect(0, 590, 200, 25),"Prop List", _style);
+        EditorGUI.ObjectField(new Rect(position.width /2, 590, 200, 15),stringsProperty, new GUIContent(""));
 
         EditorGUILayout.EndHorizontal();
     }
@@ -161,23 +146,22 @@ public class MainWindow : EditorWindow
 
         EditorGUILayout.BeginHorizontal();
 
-        EditorGUI.LabelField(new Rect(0, 19, 200, 15),"Matrix Height", _style);
-        _height = EditorGUI.IntSlider(new Rect(100, 19, position.width -110, 15), _height, 1, 10);
+        EditorGUI.LabelField(new Rect(0, 150, 200, 15),"Matrix Height", _style);
+        _height = EditorGUI.IntSlider(new Rect(100, 150, position.width -110, 15), _height, 1, 10);
 
         EditorGUILayout.EndHorizontal();
 
         EditorGUILayout.BeginHorizontal();
 
-        EditorGUI.LabelField(new Rect(0, 45, 200, 15), "Matrix Width", _style);
-        _width = EditorGUI.IntSlider(new Rect(100, 44, position.width - 110, 15), _width, 1, 10);
+        EditorGUI.LabelField(new Rect(0, 170, 200, 15), "Matrix Width", _style);
+        _width = EditorGUI.IntSlider(new Rect(100, 170, position.width - 110, 15), _width, 1, 10);
         
         EditorGUILayout.EndHorizontal();
-
-        EditorGUILayout.Space();
         
         EditorGUILayout.BeginHorizontal();
 
-        _roomSeparation = EditorGUI.FloatField(new Rect(0, 60, 200, 15),"Room Separation", _roomSeparation, _style);
+        EditorGUI.LabelField(new Rect(0, 190, 200, 15), "Room Separation", _style);
+        _roomSeparation = EditorGUI.FloatField(new Rect(100, 190, 200, 15), _roomSeparation, _style);
         
         EditorGUILayout.EndHorizontal();
 
@@ -202,9 +186,7 @@ public class MainWindow : EditorWindow
             EditorGUILayout.BeginVertical();
             for (int y = 0; y < _height; y++)
             {
-
-                //grid[x, y] = ButtonCheck(x,y);
-                grid[x, y] = EditorGUI.Toggle(new Rect(position.width / x, position.height / y, 200, 200), ButtonCheck(x,y));
+                grid[x, y] = ButtonCheck(x,y);
             }
             EditorGUILayout.EndVertical();
         }
@@ -237,7 +219,7 @@ public class MainWindow : EditorWindow
         if (grid[x, y]) buttonTexture = buttonTextureA;
         else buttonTexture = buttonTextureB;
 
-        if (GUILayout.Button(buttonTexture, GUILayout.Height(25), GUILayout.Width(25)))
+        if (GUI.Button(new Rect(20 +(35 * x),210+(35 * y), 25,25),buttonTexture))
             return !grid[x, y];
 
         else return grid[x, y];
