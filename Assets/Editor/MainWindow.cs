@@ -19,12 +19,17 @@ public class MainWindow : EditorWindow
     private List<GameObject> _nodeList = new List<GameObject>();
     private int _column;
     private int _row;
+    private GameObject _room1;
+    private GameObject _room2A;
+    private GameObject _room2B;
+    private GameObject _room3;
+    private GameObject _room4;
 
     private static Generator _generator;
 
-    private readonly GUIStyle _style = new GUIStyle(EditorStyles.label);
-    private readonly GUIStyle _titleStyle = new GUIStyle(EditorStyles.label);
-    private readonly GUIStyle _errorStyle = new GUIStyle(EditorStyles.label);
+    private static readonly GUIStyle _style = new GUIStyle(EditorStyles.label);
+    private static readonly GUIStyle _titleStyle = new GUIStyle(EditorStyles.label);
+    private static readonly GUIStyle _errorStyle = new GUIStyle(EditorStyles.label);
 
     [MenuItem("CustomTools/MapGenerator")]
     public static void OpenWindow()
@@ -36,6 +41,9 @@ public class MainWindow : EditorWindow
         window.minSize = new Vector2(500, 710);
         
         _generator = new Generator();
+        
+        _style.normal.textColor = Color.white;
+        _errorStyle.normal.textColor = Color.red;
     }
 
     private void OnGUI()
@@ -92,9 +100,34 @@ public class MainWindow : EditorWindow
         
         EditorGUILayout.Space();
         
+        EditorGUILayout.BeginHorizontal();
+        GUILayout.Label("One entrance Room");
+        _room1 = (GameObject) EditorGUILayout.ObjectField(_room1, typeof(GameObject), true);
+        EditorGUILayout.EndHorizontal();
+        
+        EditorGUILayout.BeginHorizontal();
+        GUILayout.Label("Two entrances 'A' Room");
+        _room2A = (GameObject) EditorGUILayout.ObjectField(_room2A, typeof(GameObject), true);
+        EditorGUILayout.EndHorizontal();
+        
+        EditorGUILayout.BeginHorizontal();
+        GUILayout.Label("Two entrances 'B' Room");
+        _room2B = (GameObject) EditorGUILayout.ObjectField(_room2B, typeof(GameObject), true);
+        EditorGUILayout.EndHorizontal();
+        
+        EditorGUILayout.BeginHorizontal();
+        GUILayout.Label("Three entrances Room");
+        _room3 = (GameObject) EditorGUILayout.ObjectField(_room3, typeof(GameObject), true);
+        EditorGUILayout.EndHorizontal();
+        
+        EditorGUILayout.BeginHorizontal();
+        GUILayout.Label("Four entrances Room");
+        _room4 = (GameObject) EditorGUILayout.ObjectField(_room4, typeof(GameObject), true);
+        EditorGUILayout.EndHorizontal();
+        
+
         //if (GUILayout.Button("Generate", GUILayout.Height(40)))
         //    Generate();
-        
         EditorGUILayout.Space();
         
         //if (GUILayout.Button("Delete Map", GUILayout.Height(40)))
@@ -223,20 +256,29 @@ public class MainWindow : EditorWindow
     {
         DeleteMap(false);
         
-        _generator.SetParameters(grid, _width,_height, _roomSeparation);
+        _generator.SetParameters(grid, _width,_height, _roomSeparation, _room1, _room2A, _room2B, _room3, _room4);
         _generator.GenerateDungeon();
 
         _nodeList = _generator.GetNodes();
         
-        Debug.Log("Map generated successfully.");
+        
+        if(_nodeList.Count > 0)
+            Debug.Log("Map generated successfully.");
+        else
+            Debug.LogError("There are no nodes selected to generate the map!");
     }
 
     private void DeleteMap(bool showMessage = true)
     {
         if (_nodeList.Count == 0 && showMessage)
         {
-            Debug.LogWarning("There is no map to delete!");
-            return;
+            _nodeList = _generator.GetNodes();
+
+            if (_nodeList.Count == 0)
+            {
+                Debug.LogWarning("There is no map to delete!");
+                return;   
+            }
         }
 
         foreach (GameObject item in _nodeList)
