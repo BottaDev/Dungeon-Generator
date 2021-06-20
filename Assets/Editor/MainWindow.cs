@@ -11,8 +11,8 @@ public class MainWindow : EditorWindow
     public Texture2D buttonTextureB;
 
 
-    private static int _height = 10;
-    private static int _width = 10;
+    private static int _columns = 10;
+    private static int _rows = 10;
     private static bool[,] grid = new bool[10, 10];
     private static int _propCount;
     private static float _roomSeparation = 1;
@@ -27,8 +27,8 @@ public class MainWindow : EditorWindow
 
     private static Generator _generator;
 
-    private static readonly GUIStyle _style      = new GUIStyle(EditorStyles.label);
     private static readonly GUIStyle _titleStyle = new GUIStyle(EditorStyles.label);
+    private static readonly GUIStyle _style      = new GUIStyle(EditorStyles.label);
     private static readonly GUIStyle _errorStyle = new GUIStyle(EditorStyles.label);
 
     [MenuItem("CustomTools/MapGenerator")]
@@ -63,7 +63,7 @@ public class MainWindow : EditorWindow
             GUI.DrawTexture(new Rect(0, 0, position.width, position.height), tex, ScaleMode.StretchToFill);
         
         if (tex2 != null)
-            GUI.DrawTexture(new Rect(0, 0, position.width, 170 + _height * 19), tex2, ScaleMode.StretchToFill);
+            GUI.DrawTexture(new Rect(0, 0, position.width, 170 + _columns * 19), tex2, ScaleMode.StretchToFill);
 
         EditorGUILayout.BeginHorizontal();
         GUI.Label(new Rect(0, 30, 200,25),"One entrance Room",_style);
@@ -149,15 +149,15 @@ public class MainWindow : EditorWindow
 
         EditorGUILayout.BeginHorizontal();
 
-        EditorGUI.LabelField(new Rect(0, 130, 200, 15),"Matrix Height", _style);
-        _height = EditorGUI.IntSlider(new Rect(100, 130, position.width -110, 15), _height, 1, 10);
+        EditorGUI.LabelField(new Rect(0, 130, 200, 15),"Matrix Rows", _style);
+        _columns = EditorGUI.IntSlider(new Rect(100, 130, position.width -110, 15), _columns, 1, 10);
 
         EditorGUILayout.EndHorizontal();
 
         EditorGUILayout.BeginHorizontal();
 
-        EditorGUI.LabelField(new Rect(0, 150, 200, 15), "Matrix Width", _style);
-        _width = EditorGUI.IntSlider(new Rect(100, 150, position.width - 110, 15), _width, 1, 10);
+        EditorGUI.LabelField(new Rect(0, 150, 200, 15), "Matrix Columns", _style);
+        _rows = EditorGUI.IntSlider(new Rect(100, 150, position.width - 110, 15), _rows, 1, 10);
         
         EditorGUILayout.EndHorizontal();
         
@@ -174,8 +174,8 @@ public class MainWindow : EditorWindow
             error = true;
         }
         
-        if (_width != grid.GetLength(0) || _height != grid.GetLength(1))
-            grid = new bool[_width, _height];
+        if (_rows != grid.GetLength(0) || _columns != grid.GetLength(1))
+            grid = new bool[_rows, _columns];
         
         if (!error)
             DrawGrid();
@@ -184,20 +184,20 @@ public class MainWindow : EditorWindow
     private void DrawGrid()
     {
         EditorGUILayout.BeginHorizontal();
-        for (int x = 0; x < _width; x++)
+        for (int x = 0; x < _rows; x++)
         {
             EditorGUILayout.BeginVertical();
-            for (int y = 0; y < _height; y++)
+            for (int y = 0; y < _columns; y++)
             {
                 grid[x, y] = ButtonCheck(x,y);
                   
-                if (GUI.Button(new Rect(60 + (35 * _width), 192.5f + (35 * y), 20, 20), "<"))
+                if (GUI.Button(new Rect(60 + (35 * _rows), 192.5f + (35 * y), 20, 20), "<"))
                 {
                     SelectRow(y);
                 }
             }
 
-            if (GUI.Button(new Rect(62.5f + (35 * x), 190 + (35 * _height), 20, 20), "^"))
+            if (GUI.Button(new Rect(62.5f + (35 * x), 190 + (35 * _columns), 20, 20), "^"))
             {
                 SelectColumn(x); 
             }
@@ -212,7 +212,7 @@ public class MainWindow : EditorWindow
         int counter = 0;
 
         EditorGUILayout.BeginVertical();
-        for (int y = 0; y < _height; y++)
+        for (int y = 0; y < _columns; y++)
         {
             if (!grid[columnNumber, y])
             {
@@ -222,7 +222,7 @@ public class MainWindow : EditorWindow
         }
         if (counter == 0)
         {
-            for (int y = 0; y < _height; y++)
+            for (int y = 0; y < _columns; y++)
             {
                 grid[columnNumber, y] = false; 
             }
@@ -235,7 +235,7 @@ public class MainWindow : EditorWindow
         int counter = 0;
 
         EditorGUILayout.BeginVertical();
-        for (int x = 0; x < _height; x++)
+        for (int x = 0; x < _columns; x++)
         {
             if (!grid[x, rowNumber])
             {
@@ -245,7 +245,7 @@ public class MainWindow : EditorWindow
         }
         if (counter == 0)
         {
-            for (int x = 0; x < _height; x++)
+            for (int x = 0; x < _columns; x++)
             {
                 grid[x, rowNumber] = false;
             }
@@ -270,9 +270,9 @@ public class MainWindow : EditorWindow
 
     void InvertGrid()
     {
-        for (int x = 0; x < _width; x++)
+        for (int x = 0; x < _rows; x++)
         {
-            for (int y = 0; y < _height; y++)
+            for (int y = 0; y < _columns; y++)
             {
                 grid[x, y] = !grid[x, y];
             }
@@ -280,9 +280,9 @@ public class MainWindow : EditorWindow
     }
     void ClearGrid()
     {
-        for (int x = 0; x < _width; x++)
+        for (int x = 0; x < _rows; x++)
         {
-            for (int y = 0; y < _height; y++)
+            for (int y = 0; y < _columns; y++)
             {
                 grid[x, y] = false;
             }
@@ -299,7 +299,7 @@ public class MainWindow : EditorWindow
             return;
         }
 
-        _generator.SetParameters(grid, _width,_height, _roomSeparation, _room1, _room2A, _room2B, _room3, _room4);
+        _generator.SetParameters(grid, _columns, _rows, _roomSeparation, _room1, _room2A, _room2B, _room3, _room4);
         _generator.GenerateDungeon();
 
         _nodeList = _generator.GetNodes();
