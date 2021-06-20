@@ -11,19 +11,19 @@ public class MainWindow : EditorWindow
     public Texture2D buttonTextureB;
 
 
-    private int _height = 10;
-    private int _width = 10;
-    private bool[,] grid = new bool[10, 10];
-    private int _propCount;
-    private float _roomSeparation = 1;
+    private static int _height = 10;
+    private static int _width = 10;
+    private static bool[,] grid = new bool[10, 10];
+    private static int _propCount;
+    private static float _roomSeparation = 1;
     private List<GameObject> _nodeList = new List<GameObject>();
-    private int _column;
-    private int _row;
-    private GameObject _room1;
-    private GameObject _room2A;
-    private GameObject _room2B;
-    private GameObject _room3;
-    private GameObject _room4;
+    //private int _column;
+    //private int _row;
+    private static GameObject _room1;
+    private static GameObject _room2A;
+    private static GameObject _room2B;
+    private static GameObject _room3;
+    private static GameObject _room4;
 
     private static Generator _generator;
 
@@ -256,13 +256,16 @@ public class MainWindow : EditorWindow
     bool ButtonCheck(int x, int y)
     {
         Texture2D buttonTexture;
-        if (grid[x, y]) buttonTexture = buttonTextureA;
-        else buttonTexture = buttonTextureB;
 
-        if (GUI.Button(new Rect(60 +(35 * x),190+(35 * y), 25,25),buttonTexture))
+        if (grid[x, y]) 
+            buttonTexture = buttonTextureA;
+        else
+            buttonTexture = buttonTextureB;
+
+        if (GUI.Button(new Rect(60 + (35 * x), 190 + (35 * y), 25, 25), buttonTexture))
             return !grid[x, y];
-
-        else return grid[x, y];
+        else 
+            return grid[x, y];
     }
 
     void InvertGrid()
@@ -289,17 +292,25 @@ public class MainWindow : EditorWindow
     private void Generate()
     {
         DeleteMap(false);
-        
+
+        if (_room1 == null || _room2A == null || _room2B == null || _room3 == null || _room4 == null)
+        {
+            Debug.LogError("There are prefabs that are not assigned!");
+            return;
+        }
+
         _generator.SetParameters(grid, _width,_height, _roomSeparation, _room1, _room2A, _room2B, _room3, _room4);
         _generator.GenerateDungeon();
 
         _nodeList = _generator.GetNodes();
-        
-        
-        if(_nodeList.Count > 0)
-            Debug.Log("Map generated successfully.");
-        else
+
+        if (_nodeList.Count == 0)
+        {
             Debug.LogError("There are no nodes selected to generate the map!");
+            return;
+        }
+
+        Debug.Log("Map generated successfully.");
     }
 
     private void DeleteMap(bool showMessage = true)

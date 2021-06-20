@@ -46,10 +46,8 @@ public class Generator
             {
                 if (_grid[x, y])
                 {
-                    GameObject node = SetRoom(x, y);
+                    GameObject node = GameObject.Instantiate(SetRoom(x, y));
                     node.name = "Node [" + x + " | " + y + "]";
-
-                    GameObject.Instantiate(node);
                     
                     if (x == 0 && y == 0)
                         node.transform.position = Vector3.zero;
@@ -59,10 +57,10 @@ public class Generator
                     _nodeList.Add(node);
                 }
 
-                lastPos += new Vector3(_roomSeparation, 0, 0);
+                lastPos += new Vector3(0, 0, _roomSeparation);
             }
-            
-            lastPos += new Vector3(-lastPos.x, 0, _roomSeparation);
+
+            lastPos += new Vector3(_roomSeparation, 0, -lastPos.z);
         }
     }
 
@@ -109,10 +107,8 @@ public class Generator
             roomPrefab = _room4;
         }
 
-        Vector3 newRotation = SetRotation(sidesCount, leftSide, rightSide, topSide, bottonSide);
-        // Change room rotation
-        roomPrefab.transform.eulerAngles = newRotation;
-        
+        roomPrefab.transform.eulerAngles = SetRotation(sidesCount, leftSide, rightSide, topSide, bottonSide);
+
         return roomPrefab;
     }
 
@@ -176,11 +172,6 @@ public class Generator
 
         if (x == 0)
         {
-            //topSide = false; 
-
-            //if (!_grid[x + 1, y]) // Botton Node
-            //bottonSide = false;
-
             leftSide = false;
 
             if (!_grid[x + 1, y]) // Right Node
@@ -188,11 +179,6 @@ public class Generator
         }
         else if (x == _grid.GetLength(0) - 1)
         {
-            //bottonSide = false;
-
-            //if (!_grid[x - 1, y]) // Top Node
-            //    topSide = false;
-
             rightSide = false;
 
             if (!_grid[x - 1, y]) // Left Node
@@ -200,12 +186,6 @@ public class Generator
         }
         else
         {
-            //if (!_grid[x - 1, y]) // Top Node
-            //    topSide = false;
-
-            //if (!_grid[x + 1, y]) // Botton Node
-            //    bottonSide = false;
-
             if (!_grid[x + 1, y]) // Left Node
                 leftSide = false;
 
@@ -215,11 +195,6 @@ public class Generator
 
         if (y == 0)
         {
-            //leftSide = false;
-
-            //if (!_grid[x, y + 1]) // Right Node
-            //    rightSide = false;
-
             topSide = false;
 
             if (!_grid[x, y + 1]) // Botton Node
@@ -227,11 +202,6 @@ public class Generator
         }
         else if (y == _grid.GetLength(1) - 1)
         {
-            //rightSide = false;
-
-            //if (!_grid[x, y - 1]) // Left Node
-            //    leftSide = false;
-
             bottonSide = false;
 
             if (!_grid[x, y - 1]) // Top Node
@@ -239,12 +209,6 @@ public class Generator
         }
         else
         {
-            //if (!_grid[x, y - 1]) // Left Node
-            //    leftSide = false;
-
-            //if (!_grid[x, y + 1]) // Right Node
-            //    rightSide = false;
-
             if (!_grid[x, y - 1]) // Top Node
                 topSide = false;
 
