@@ -74,6 +74,7 @@ public class Generator
         bool bottonSide = false;
         GameObject roomPrefab = null;
         
+        // Check room boundary
         if (_grid.GetLength(0) == 1 || _grid.GetLength(1) == 1)
         {
             CheckLineNode(x, y, out leftSide, out rightSide, out topSide, out bottonSide);
@@ -86,11 +87,11 @@ public class Generator
                 CheckCenterNode(x, y, out leftSide, out rightSide, out topSide, out bottonSide);   
         }
 
-
+        // Set room
         int sidesCount = new bool[4] { leftSide, rightSide, topSide, bottonSide }.Where(c => c).Count();
         if (sidesCount == 0 || sidesCount == 1)
         {
-            roomPrefab = _room1;   
+            roomPrefab = _room1;
         }
         else if (sidesCount == 2)
         {
@@ -107,10 +108,65 @@ public class Generator
         {
             roomPrefab = _room4;
         }
+
+        Vector3 newRotation = SetRotation(sidesCount, leftSide, rightSide, topSide, bottonSide);
+        // Change room rotation
+        roomPrefab.transform.eulerAngles = newRotation;
         
         return roomPrefab;
     }
 
+    private Vector3 SetRotation(int sides, bool leftSide, bool rightSide, bool topSide, bool bottonSide)
+    {
+        Vector3 newRotation = new Vector3();
+
+        switch (sides)
+        {
+            case 1:
+                if (leftSide)
+                    newRotation = new Vector3(0, 180, 0);
+                else if (rightSide)
+                    newRotation = new Vector3(0, 0, 0);
+                else if (topSide)
+                    newRotation = new Vector3(0, -90, 0);
+                else if (bottonSide)
+                    newRotation = new Vector3(0, 90, 0);
+                break;
+            
+            case 2:
+                if (leftSide && rightSide)              // 2A
+                    newRotation = new Vector3(0, 180, 0);
+                else if (topSide && bottonSide)         // 2A
+                    newRotation = new Vector3(0, 90, 0);
+                else if (rightSide && bottonSide)       // 2B
+                    newRotation = new Vector3(0, 0, 0);
+                else if (leftSide && bottonSide)        // 2B
+                    newRotation = new Vector3(0, 90, 0);
+                else if (leftSide && topSide)           // 2B
+                    newRotation = new Vector3(0, 180, 0);
+                else if (rightSide && topSide)          // 2B
+                    newRotation = new Vector3(0, 270, 0);
+                break;
+            
+            case 3:
+                if (leftSide && rightSide && bottonSide)
+                    newRotation = new Vector3(0, 0, 0);
+                else if (leftSide && topSide && bottonSide)
+                    newRotation = new Vector3(0, 90, 0);
+                else if (leftSide && rightSide && topSide)
+                    newRotation = new Vector3(0, 180, 0);
+                else if (topSide && rightSide && bottonSide)
+                    newRotation = new Vector3(0, 270, 0);
+                break;
+            
+            case 4:
+                // Do nothing...
+                break;
+        }
+        
+        return newRotation;
+    }
+    
     private void CheckBoundaryNode(int x, int y, out bool leftSide, out bool rightSide, out bool topSide, out bool bottonSide)
     {
         leftSide = true;
@@ -120,48 +176,80 @@ public class Generator
 
         if (x == 0)
         {
-            topSide = false; 
-            
-            if (!_grid[x + 1, y]) // Botton Node
-                bottonSide = false;
+            //topSide = false; 
+
+            //if (!_grid[x + 1, y]) // Botton Node
+            //bottonSide = false;
+
+            leftSide = false;
+
+            if (!_grid[x + 1, y]) // Right Node
+                rightSide = false;
         }
         else if (x == _grid.GetLength(0) - 1)
         {
-            bottonSide = false;
-            
-            if (!_grid[x - 1, y]) // Top Node
-                topSide = false;
+            //bottonSide = false;
+
+            //if (!_grid[x - 1, y]) // Top Node
+            //    topSide = false;
+
+            rightSide = false;
+
+            if (!_grid[x - 1, y]) // Left Node
+                leftSide = false;
         }
         else
         {
-            if (!_grid[x - 1, y]) // Top Node
-                topSide = false;
-            
-            if (!_grid[x + 1, y]) // Botton Node
-                bottonSide = false;
+            //if (!_grid[x - 1, y]) // Top Node
+            //    topSide = false;
+
+            //if (!_grid[x + 1, y]) // Botton Node
+            //    bottonSide = false;
+
+            if (!_grid[x + 1, y]) // Left Node
+                leftSide = false;
+
+            if (!_grid[x + 1, y]) // Right Node
+                rightSide = false;
         }
 
         if (y == 0)
         {
-            leftSide = false;
-            
-            if (!_grid[x, y + 1]) // Right Node
-                rightSide = false;
+            //leftSide = false;
+
+            //if (!_grid[x, y + 1]) // Right Node
+            //    rightSide = false;
+
+            topSide = false;
+
+            if (!_grid[x, y + 1]) // Botton Node
+                bottonSide = false;
         }
         else if (y == _grid.GetLength(1) - 1)
         {
-            rightSide = false;
-            
-            if (!_grid[x, y - 1]) // Left Node
-                leftSide = false;
+            //rightSide = false;
+
+            //if (!_grid[x, y - 1]) // Left Node
+            //    leftSide = false;
+
+            bottonSide = false;
+
+            if (!_grid[x, y - 1]) // Top Node
+                topSide = false;
         }
         else
         {
-            if (!_grid[x, y - 1]) // Left Node
-                leftSide = false;
-            
-            if (!_grid[x, y + 1]) // Right Node
-                rightSide = false;
+            //if (!_grid[x, y - 1]) // Left Node
+            //    leftSide = false;
+
+            //if (!_grid[x, y + 1]) // Right Node
+            //    rightSide = false;
+
+            if (!_grid[x, y - 1]) // Top Node
+                topSide = false;
+
+            if (!_grid[x, y + 1]) // Botton Node
+                bottonSide = false;
         }
     }
 
@@ -172,16 +260,16 @@ public class Generator
         topSide = true;
         bottonSide = true;
         
-        if (!_grid[x - 1, y]) // Top Node
+        if (!_grid[x, y - 1]) // Top Node
             topSide = false;
             
-        if (!_grid[x + 1, y]) // Botton Node
+        if (!_grid[x, y + 1]) // Botton Node
             bottonSide = false;
         
-        if (!_grid[x, y - 1]) // Left Node
+        if (!_grid[x - 1, y]) // Left Node
             leftSide = false;
             
-        if (!_grid[x, y + 1]) // Right Node
+        if (!_grid[x + 1, y]) // Right Node
             rightSide = false;
     }
 
