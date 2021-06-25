@@ -21,8 +21,8 @@ public class MainWindow : EditorWindow
 
     private static Generator _generator;
 
-    private static readonly GUIStyle _titleStyle = new GUIStyle(EditorStyles.label);
-    private static readonly GUIStyle _style      = new GUIStyle(EditorStyles.label);
+    private static readonly GUIStyle _titleStyle = new GUIStyle(EditorStyles.label); 
+    private static readonly GUIStyle _style      = new GUIStyle(EditorStyles.label); 
     private static readonly GUIStyle _errorStyle = new GUIStyle(EditorStyles.label);
 
     [MenuItem("CustomTools/MapGenerator")]
@@ -112,7 +112,7 @@ public class MainWindow : EditorWindow
         EditorGUILayout.BeginHorizontal();
 
         EditorGUI.LabelField(new Rect(0, 170, 200, 15), "Room Separation", _style);
-        _roomSeparation = EditorGUI.FloatField(new Rect(100, 170, 200, 15), _roomSeparation, _style);
+        _roomSeparation = EditorGUI.FloatField(new Rect(position.width/4, 170, 200, 20), _roomSeparation, _style);
         
         EditorGUILayout.EndHorizontal();
 
@@ -183,7 +183,7 @@ public class MainWindow : EditorWindow
         int counter = 0;
 
         EditorGUILayout.BeginVertical();
-        for (int x = 0; x < _columns; x++)
+        for (int x = 0; x < _rows; x++)
         {
             if (!grid[x, rowNumber])
             {
@@ -193,7 +193,7 @@ public class MainWindow : EditorWindow
         }
         if (counter == 0)
         {
-            for (int x = 0; x < _columns; x++)
+            for (int x = 0; x < _rows; x++)
             {
                 grid[x, rowNumber] = false;
             }
