@@ -4,9 +4,6 @@ using System.Collections.Generic;
 
 public class MainWindow : EditorWindow
 {
-    public GameObject propList;
-    public Texture2D tex;
-    public Texture2D tex2;
     public Texture2D buttonTextureA;
     public Texture2D buttonTextureB;
 
@@ -14,11 +11,8 @@ public class MainWindow : EditorWindow
     private static int _columns = 10;
     private static int _rows = 10;
     private static bool[,] grid = new bool[10, 10];
-    private static int _propCount;
     private static float _roomSeparation = 1;
     private List<GameObject> _nodeList = new List<GameObject>();
-    //private int _column;
-    //private int _row;
     private static GameObject _room1;
     private static GameObject _room2A;
     private static GameObject _room2B;
@@ -27,8 +21,8 @@ public class MainWindow : EditorWindow
 
     private static Generator _generator;
 
-    private static readonly GUIStyle _titleStyle = new GUIStyle(EditorStyles.label);
-    private static readonly GUIStyle _style      = new GUIStyle(EditorStyles.label);
+    private static readonly GUIStyle _titleStyle = new GUIStyle(EditorStyles.label); 
+    private static readonly GUIStyle _style      = new GUIStyle(EditorStyles.label); 
     private static readonly GUIStyle _errorStyle = new GUIStyle(EditorStyles.label);
 
     [MenuItem("CustomTools/MapGenerator")]
@@ -38,7 +32,7 @@ public class MainWindow : EditorWindow
 
         window.wantsMouseMove = true;
 
-        window.minSize = new Vector2(500, 710);
+        window.minSize = new Vector2(480, 630);
         
         _generator = new Generator();
         
@@ -48,22 +42,14 @@ public class MainWindow : EditorWindow
 
     private void OnGUI()
     {
-        _style.normal.textColor = Color.white;
+        _style.normal.textColor = Color.black;
         _errorStyle.normal.textColor = Color.red;
-        _titleStyle.normal.textColor = Color.white;
+        _titleStyle.normal.textColor = Color.black;
         _titleStyle.fontSize = 20;
 
         EditorGUILayout.BeginHorizontal();
-
-        //EditorGUI.LabelField(new Rect(0, 10, 200, 200), "Dungeon Generator ", _titleStyle);
-          
+        EditorGUI.LabelField(new Rect(position.width / 2 - 100, 0, 200, 200), "Dungeon Generator ", _titleStyle);
         EditorGUILayout.EndHorizontal();
-        
-        if (tex != null)
-            GUI.DrawTexture(new Rect(0, 0, position.width, position.height), tex, ScaleMode.StretchToFill);
-        
-        if (tex2 != null)
-            GUI.DrawTexture(new Rect(0, 0, position.width, 170 + _columns * 19), tex2, ScaleMode.StretchToFill);
 
         EditorGUILayout.BeginHorizontal();
         GUI.Label(new Rect(0, 30, 200,25),"One entrance Room",_style);
@@ -90,57 +76,19 @@ public class MainWindow : EditorWindow
         _room4 = (GameObject) EditorGUI.ObjectField(new Rect(position.width / 2, 110, 200, 15), _room4, typeof(GameObject), true);
         EditorGUILayout.EndHorizontal();
 
-        DrawGridConfig();
-        //int column = EditorGUILayout.IntField(_column, _style);
-        //if (column <= 10)
-        //    _column = column;
-        //else
-        //    _column = 10;
-        //if (GUILayout.Button("C", GUILayout.Width(20), GUILayout.Height(20)))
-        //    SelectColumn(_column - 1);
-
-        //int row = EditorGUILayout.IntField(_row, _style);
-        //if (row <= 10)
-        //    _row = row;
-        //else
-        //    _row = 10;
-        //if (GUILayout.Button("R", GUILayout.Width(20), GUILayout.Height(20)))
-        //    SelectRow(_row -1);
-
-        DrawPropConfig();  
+        DrawGridConfig(); 
         
-        if (GUI.Button(new Rect(position.width / 2 - 205, 630, 200, 25), "Invert All Grid"))
+        if (GUI.Button(new Rect(position.width / 2 - 205, 570, 200, 25), "Invert All Grid"))
             InvertGrid();
 
-        if (GUI.Button(new Rect(position.width / 2 + 5  , 630, 200, 25), "Clear Grid"))
+        if (GUI.Button(new Rect(position.width / 2 + 5  , 570, 200, 25), "Clear Grid"))
             ClearGrid();
 
-        if (GUI.Button(new Rect(position.width / 2 - 205, 660, 200, 25),"Generate"))
+        if (GUI.Button(new Rect(position.width / 2 - 205, 600, 200, 25),"Generate"))
             Generate();
          
-        if (GUI.Button(new Rect(position.width / 2 + 5  , 660, 200, 25),"Delete Map"))
+        if (GUI.Button(new Rect(position.width / 2 + 5  , 600, 200, 25),"Delete Map"))
             DeleteMap();
-    }
-
-    private void DrawPropConfig()
-    {
-        EditorGUILayout.BeginHorizontal();
-
-        EditorGUI.LabelField(new Rect(0,570, 200, 25),"Prop Count", _style);
-        _propCount = EditorGUI.IntField(new Rect(position.width / 2, 570, 200, 15), _propCount);
-
-        EditorGUILayout.EndHorizontal();
-
-        ScriptableObject target = this;
-        SerializedObject so = new SerializedObject(target);
-        SerializedProperty stringsProperty = so.FindProperty("propList");
-
-        EditorGUILayout.BeginHorizontal();
-
-        EditorGUI.LabelField(new Rect(0, 590, 200, 25),"Prop List", _style);
-        EditorGUI.ObjectField(new Rect(position.width /2, 590, 200, 15),stringsProperty, new GUIContent(""));
-
-        EditorGUILayout.EndHorizontal();
     }
     
     private void DrawGridConfig()
@@ -164,7 +112,7 @@ public class MainWindow : EditorWindow
         EditorGUILayout.BeginHorizontal();
 
         EditorGUI.LabelField(new Rect(0, 170, 200, 15), "Room Separation", _style);
-        _roomSeparation = EditorGUI.FloatField(new Rect(100, 170, 200, 15), _roomSeparation, _style);
+        _roomSeparation = EditorGUI.FloatField(new Rect(position.width/4, 170, 200, 20), _roomSeparation, _style);
         
         EditorGUILayout.EndHorizontal();
 
@@ -235,7 +183,7 @@ public class MainWindow : EditorWindow
         int counter = 0;
 
         EditorGUILayout.BeginVertical();
-        for (int x = 0; x < _columns; x++)
+        for (int x = 0; x < _rows; x++)
         {
             if (!grid[x, rowNumber])
             {
@@ -245,7 +193,7 @@ public class MainWindow : EditorWindow
         }
         if (counter == 0)
         {
-            for (int x = 0; x < _columns; x++)
+            for (int x = 0; x < _rows; x++)
             {
                 grid[x, rowNumber] = false;
             }
