@@ -21,8 +21,8 @@ public class MainWindow : EditorWindow
 
     private static Generator _generator;
 
-    private static readonly GUIStyle _titleStyle = new GUIStyle(EditorStyles.label);
-    private static readonly GUIStyle _style      = new GUIStyle(EditorStyles.label);
+    private static readonly GUIStyle _titleStyle = new GUIStyle(EditorStyles.label); 
+    private static readonly GUIStyle _style      = new GUIStyle(EditorStyles.label); 
     private static readonly GUIStyle _errorStyle = new GUIStyle(EditorStyles.label);
 
     [MenuItem("CustomTools/MapGenerator")]
@@ -118,7 +118,7 @@ public class MainWindow : EditorWindow
 
         if (_roomSeparation < 1)
         {
-            EditorGUI.LabelField(new Rect(0, 190, 300, 15),"The room separation must be greater than 1!", _errorStyle);
+            GUILayout.Label("The room separation must be greater than 1!", _errorStyle);
             error = true;
         }
         
